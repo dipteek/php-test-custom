@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: php_app
+    ports:
+      - "80:80"
+    volumes:
+      - ${PWD}/web:/var/www/html
+      - ${PWD}/src:/var/www/html/src
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: hellofresh
+      POSTGRES_USER: hellofresh
+      POSTGRES_PASSWORD: hellofresh
+    ports:
+      - "5432:5432"
+    networks:
+      - app_network
+
+  redis:
+    image: redis:latest
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    networks:
+      - app_network
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
